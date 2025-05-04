@@ -32,7 +32,7 @@ services:
     environment:
       - YOUTUBE_MCP_SERVER_PORT=${MCP_SERVER_PORT}
     ports:
-      - 5000:${MCP_SERVER_PORT}
+      - ${YOUTUBE_MCP_SERVER_PORT}:${MCP_SERVER_PORT}
 
   dbhub:
     image: bytebase/dbhub:0.3.3

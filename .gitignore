@@ -172,3 +172,7 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Environment specific files
+envs/backend.env
+envs/youtube.env
