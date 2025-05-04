@@ -30,7 +30,7 @@ async def checkpointer_context(
     # A compatible psycopg connection is created via the connection pool to connect to the checkpointer.
     async with AsyncConnectionPool(
         conninfo=conn_str,
-        kwargs=dict(prepare_threshold=None),
+        kwargs=dict(prepare_threshold=None, autocommit=True),
     ) as pool:
         checkpointer = AsyncPostgresSaver(pool)
         try:
