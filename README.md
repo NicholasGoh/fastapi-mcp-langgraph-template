@@ -299,3 +299,13 @@ The following markdown files provide additional details on other features:
 > Click above to view live update on star history as per their [article](https://www.star-history.com/blog/a-message-to-github-star-history-users):
 > Ongoing Broken Live Chart
 > you can still use this website to view and download charts (though you may need to provide your own token).
+
+## Docker Setup
+
+1.  **Build the Docker Image:**
+    ```bash
+    docker build -f Dockerfile -t mcp/gmail .
+    ```
+2.  **Run Authentication (first time only):**
+    ```bash
+    // ... existing code ...

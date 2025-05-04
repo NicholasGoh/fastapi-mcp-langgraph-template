@@ -25,14 +25,14 @@ services:
       - ./backend/mcp:/app/mcp
       - ./backend/shared_mcp:/app/shared_mcp
 
-  youtube:
-    image: youtube-mcp-server
-    env_file:
-      - ./envs/youtube.env
-    environment:
-      - YOUTUBE_MCP_SERVER_PORT=${MCP_SERVER_PORT}
-    ports:
-      - ${YOUTUBE_MCP_SERVER_PORT}:${MCP_SERVER_PORT}
+  # youtube:
+  #   image: youtube-mcp-server
+  #   env_file:
+  #     - ./envs/youtube.env
+  #   environment:
+  #     - YOUTUBE_MCP_SERVER_PORT=${MCP_SERVER_PORT}
+  #   ports:
+  #     - ${YOUTUBE_MCP_SERVER_PORT}:${MCP_SERVER_PORT}
 
   dbhub:
     image: bytebase/dbhub:0.3.3
@@ -57,3 +57,25 @@ services:
       - 80:80
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+
+    # Make sure ~/.gmail-mcp/gcp-oauth.keys.json exists
+    # Create the docker volume if it doesn't exist: docker volume create mcp-gmail
+    # docker run -i --rm \
+    #   --mount type=bind,source=~/.gmail-mcp/gcp-oauth.keys.json,target=/gcp-oauth.keys.json \
+    #   -v mcp-gmail:/gmail-server \
+    #   -e GMAIL_OAUTH_PATH=/gcp-oauth.keys.json \
+    #   -e "GMAIL_CREDENTIALS_PATH=/gmail-server/credentials.json" \
+    #   -p 3000:3000 \
+    #   mcp/gmail auth
+
+  gmail-mcp:
+    image: mcp/gmail
+    container_name: gmail-mcp-server
+    volumes:
+      - ~/.gmail-mcp:/home/node/.gmail-mcp
+    environment:
+      - GMAIL_OAUTH_PATH=/home/node/.gmail-mcp/gcp-oauth.keys.json
+      - GMAIL_CREDENTIALS_PATH=/home/node/.gmail-mcp/credentials.json
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
