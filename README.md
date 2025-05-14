@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/nicholasgoh-fastapi-mcp-langgraph-template-badge.png)](https://mseep.ai/app/nicholasgoh-fastapi-mcp-langgraph-template)
+
 # FastAPI MCP LangGraph Template
 
 A modern template for agentic orchestration — built for rapid iteration and scalable deployment using highly customizable, community-supported tools like MCP, LangGraph, and more.
