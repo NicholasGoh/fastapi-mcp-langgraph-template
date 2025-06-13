@@ -38,6 +38,14 @@ class Settings(BaseSettings):
     langfuse_host: str = "https://cloud.langfuse.com"
 
     environment: str = "development"
+    mcp_hostnames_csv: str = "mcp"
+
+    @computed_field
+    @property
+    def mcp_hostnames(self) -> list[str]:
+        return [
+            h.strip() for h in self.mcp_hostnames_csv.split(",") if h.strip()
+        ]
 
 
 settings = Settings()
