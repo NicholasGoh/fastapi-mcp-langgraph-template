@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class Resource(BaseModel):
     checkpointer: AsyncPostgresSaver
     tools: list[StructuredTool]
-    session: ClientSession
+    sessions: list[ClientSession]
 
     class Config:
         arbitrary_types_allowed = True

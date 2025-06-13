@@ -1,4 +1,4 @@
-from contextlib import asynccontextmanager
+from contextlib import AsyncExitStack, asynccontextmanager
 from typing import Annotated, AsyncGenerator
 
 from fastapi import Depends
@@ -41,12 +41,19 @@ async def setup_graph() -> AsyncGenerator[Resource]:
     async with checkpointer_context(
         settings.checkpoint_conn_str
     ) as checkpointer:
-        async with mcp_sse_client() as session:
-            tools = await load_mcp_tools(session)
+        tools = []
+        sessions = []
+        async with AsyncExitStack() as stack:
+            for hostname in settings.mcp_hostnames:
+                session = await stack.enter_async_context(
+                    mcp_sse_client(hostname)
+                )
+                tools += await load_mcp_tools(session)
+                sessions.append(session)
             yield Resource(
                 checkpointer=checkpointer,
                 tools=tools,
-                session=session,
+                sessions=sessions,
             )
 
 
