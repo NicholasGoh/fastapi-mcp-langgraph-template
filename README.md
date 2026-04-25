@@ -308,3 +308,84 @@ The following markdown files provide additional details on other features:
 > Click above to view live update on star history as per their [article](https://www.star-history.com/blog/a-message-to-github-star-history-users):
 > Ongoing Broken Live Chart
 > you can still use this website to view and download charts (though you may need to provide your own token).
+
+## FAQ
+
+### General Questions
+
+**What is this template?**
+This is a modern template for agentic orchestration built for rapid iteration and scalable deployment using highly customizable, community-supported tools like MCP, LangGraph, and more.
+
+**What are the core features?**
+- FastAPI backend with MCP server integration
+- LangGraph for agent orchestration
+- Docker Compose for easy deployment
+- Observability with Prometheus and Grafana
+- Debugging tools and monitoring
+
+### Quick Start
+
+**How do I get started?**
+1. Clone the repository
+2. Copy `.env.example` to `.env` and configure your environment variables
+3. Run `docker-compose up -d`
+4. Access the API at http://localhost:8000
+
+**What are the system requirements?**
+- Docker and Docker Compose
+- Python 3.10+ (for local development)
+- API keys for your preferred LLM provider
+
+### Development
+
+**How do I set up the development environment?**
+1. Clone the repository
+2. Create a virtual environment: `python -m venv .venv`
+3. Install dependencies: `pip install -r requirements.txt`
+4. Copy `.env.example` to `.env` and configure
+5. Run the development server: `uvicorn app.main:app --reload`
+
+**What is the project structure?**
+- `app/`: Main application code
+- `agents/`: LangGraph agent definitions
+- `mcp/`: MCP server implementations
+- `docker/`: Docker Compose configuration
+- `docs/`: Documentation
+
+### Debugging
+
+**How do I debug the agents?**
+1. Use the built-in debugging tools in the `/debug` endpoint
+2. Check the Langfuse dashboard for agent tracing
+3. Enable debug logging in your environment variables
+
+**What debugging tools are available?**
+- Langfuse for agent tracing and monitoring
+- Prometheus metrics for performance monitoring
+- Grafana dashboards for visualization
+- Built-in debug endpoint for testing
+
+### MCP Integration
+
+**What is MCP?**
+MCP (Model Context Protocol) is a standard for connecting AI models to external tools and data sources. This template includes MCP server integration for agent tool calling.
+
+**How do I configure MCP servers?**
+Add your MCP server configurations to the `mcp/` directory and update the agent definitions to use them. See the MCP documentation for details.
+
+### Troubleshooting
+
+**I am getting connection errors. What should I do?**
+1. Check that all Docker containers are running: `docker-compose ps`
+2. Verify your environment variables are set correctly
+3. Check the logs: `docker-compose logs`
+
+**How do I debug API issues?**
+1. Check the FastAPI logs for error messages
+2. Use the `/docs` endpoint to test API endpoints
+3. Enable debug mode in your environment variables
+
+**Where can I get help?**
+- Check the documentation
+- Open an issue on GitHub
+- Join the community discussions
