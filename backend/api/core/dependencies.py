@@ -1,15 +1,11 @@
-from contextlib import AsyncExitStack, asynccontextmanager
-from typing import Annotated, AsyncGenerator
+from typing import Annotated
 
-from fastapi import Depends
-from langchain_mcp_adapters.tools import load_mcp_tools
+from fastapi import Depends, Request
 from langchain_openai import ChatOpenAI
 from langfuse.callback import CallbackHandler
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
 
-from api.core.agent.persistence import checkpointer_context
 from api.core.config import settings
-from api.core.mcps import mcp_sse_client
 from api.core.models import Resource
 
 
@@ -26,7 +22,13 @@ def get_llm() -> ChatOpenAI:
 LLMDep = Annotated[ChatOpenAI, Depends(get_llm)]
 
 
-engine: AsyncEngine = create_async_engine(settings.orm_conn_str)
+engine: AsyncEngine = create_async_engine(
+    settings.orm_conn_str,
+    pool_size=settings.db_pool_size,
+    max_overflow=settings.db_max_overflow,
+    pool_pre_ping=settings.db_pool_pre_ping,
+    pool_recycle=settings.db_pool_recycle,
+)
 
 
 def get_engine() -> AsyncEngine:
@@ -36,25 +38,11 @@ def get_engine() -> AsyncEngine:
 EngineDep = Annotated[AsyncEngine, Depends(get_engine)]
 
 
-@asynccontextmanager
-async def setup_graph() -> AsyncGenerator[Resource]:
-    async with checkpointer_context(
-        settings.checkpoint_conn_str
-    ) as checkpointer:
-        tools = []
-        sessions = []
-        async with AsyncExitStack() as stack:
-            for hostname in settings.mcp_hostnames:
-                session = await stack.enter_async_context(
-                    mcp_sse_client(hostname)
-                )
-                tools += await load_mcp_tools(session)
-                sessions.append(session)
-            yield Resource(
-                checkpointer=checkpointer,
-                tools=tools,
-                sessions=sessions,
-            )
+def get_app_resource(request: Request) -> Resource:
+    return request.app.state.resource
+
+
+ResourceDep = Annotated[Resource, Depends(get_app_resource)]
 
 
 def get_langfuse_handler() -> CallbackHandler:

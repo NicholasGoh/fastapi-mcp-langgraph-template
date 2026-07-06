@@ -8,9 +8,9 @@ from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langgraph.graph import MessagesState, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from langfuse.callback import CallbackHandler
 
 from api.core.agent.prompts import SYSTEM_PROMPT
-from api.core.dependencies import LangfuseHandlerDep
 
 
 class State(MessagesState):
@@ -33,11 +33,11 @@ def agent_factory(
     return agent
 
 
-def agent_node_factory(
+async def agent_node_factory(
     state: State,
     agent: RunnableSequence,
 ) -> State:
-    result = agent.invoke(state)
+    result = await agent.ainvoke(state)
     return dict(messages=[result])
 
 
@@ -71,8 +71,8 @@ def get_graph(
     return graph_factory(worker_node, tools, checkpointer, name)
 
 
-def get_config(langfuse_handler: LangfuseHandlerDep):
+def get_config(langfuse_handler: CallbackHandler, thread_id: str):
     return dict(
-        configurable=dict(thread_id="1"),
+        configurable=dict(thread_id=thread_id),
         callbacks=[langfuse_handler],
     )
