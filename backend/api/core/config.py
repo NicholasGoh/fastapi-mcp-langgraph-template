@@ -1,10 +1,17 @@
+from pathlib import Path
+
 from pydantic import PostgresDsn, computed_field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_file="/opt/.env",
+        env_file=(
+            str(_PROJECT_ROOT / ".env"),
+            "/opt/.env",
+        ),
         env_ignore_empty=True,
         extra="ignore",
     )
@@ -16,6 +23,16 @@ class Settings(BaseSettings):
     postgres_dsn: PostgresDsn = (
         "postgresql://postgres:password@example.supabase.com:6543/postgres"
     )
+
+    db_pool_size: int = 5
+    db_max_overflow: int = 10
+    db_pool_pre_ping: bool = True
+    db_pool_recycle: int = 3600
+
+    checkpoint_pool_min_size: int = 2
+    checkpoint_pool_max_size: int = 10
+    checkpoint_pool_max_idle: float = 300.0
+    checkpoint_pool_timeout: float = 30.0
 
     @computed_field
     @property
